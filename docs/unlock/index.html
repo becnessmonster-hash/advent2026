@@ -240,6 +240,26 @@
       document.getElementById('successBox').classList.add('show');
     }
 
+    function doReset() {
+      localStorage.removeItem(STORAGE_KEY);
+      tries = 4; locked = false; unlocked = false;
+      updateHearts();
+      digits.forEach(d => { d.value = ''; d.disabled = false; d.classList.remove('success','error'); });
+      document.getElementById('lockedMsg').classList.remove('show');
+      document.getElementById('lockedBox').classList.remove('show');
+      document.getElementById('successBox').classList.remove('show');
+      document.getElementById('submitBtn').disabled = false;
+      digits[0].focus();
+    }
+
+    // Ctrl + Shift + R secret reset (works from anywhere on the page)
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+        e.preventDefault();
+        doReset();
+      }
+    });
+
     // Restore state on load
     updateHearts();
     if (unlocked) {
