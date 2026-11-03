@@ -797,7 +797,7 @@
   const events = {
     1:  [{ text: '🌟 Opening Ceremony', cls: 'pill-yellow' }, { text: '🏡 Market Opens', cls: 'pill-green' }],
     2:  [{ text: '🏡 Market', cls: 'pill-green' }],
-    3:  [{ text: '🏡 Market', cls: 'pill-green' }, { text: '🧺 Hamper Drop off Opens', cls: 'pill-green' }]],
+    3:  [{ text: '🏡 Market', cls: 'pill-green' }, { text: '🧺 Hamper Drop off Opens', cls: 'pill-green' }],
     4:  [{ text: '🎭 Christmas Carol', cls: 'pill-red' }, { text: '🏡 Market', cls: 'pill-green' }, { text: '🧺 Hamper Drop Off', cls: 'pill-green' }],
     5:  [{ text: '🎅 Santa Arrives!', cls: 'pill-green' }, { text: '🩴 Thong Throwing', cls: 'pill-red' }, { text: '🎭 Christmas Carol', cls: 'pill-red' }, { text: '🎠 Kids Fun Zone', cls: 'pill-green' }, { text: '🏡 Market', cls: 'pill-green' }, { text: '🧺 Hamper Drop Off', cls: 'pill-green' }],
     6:  [{ text: '🎬 Outdoor Cinema', cls: 'pill-pink' }, { text: '🎠 Kids Fun Zone', cls: 'pill-green' }, { text: '🏡 Market', cls: 'pill-green' }, { text: '🧺 Hamper Drop Off', cls: 'pill-green' }],
@@ -818,7 +818,7 @@
     21: [{ text: '🏡 Market', cls: 'pill-green' }],
     22: [{ text: '🏡 Market', cls: 'pill-green' }],
     23: [{ text: '🎅 Santa\'s Last Day!', cls: 'pill-red' }, { text: '🏡 Market', cls: 'pill-green' }],
-    24: [{ text: '🏡 Market Closes', cls: 'pill-green' }{ text: '🌅 Sunset Celebration', cls: 'pill-yellow' }, { text: '🎆 Fireworks 9PM', cls: 'pill-red' }],
+    24: [{ text: '🏡 Market Closes', cls: 'pill-green' }, { text: '🌅 Sunset Celebration', cls: 'pill-yellow' }, { text: '🎆 Fireworks 9PM', cls: 'pill-red' }],
   };
 
   const tooltips = {
@@ -837,7 +837,7 @@
   };
 
   const calGrid = document.getElementById('calGrid');
-  const startDay = 2; // Dec 1 2026 = Sunday
+  const startDay = 2; // Dec 1 2026 = Tuesday
   const totalCells = Math.ceil((startDay + 31) / 7) * 7;
 
   for (let i = 0; i < totalCells; i++) {
