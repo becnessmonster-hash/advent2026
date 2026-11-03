@@ -799,7 +799,7 @@
     2:  [{ text: '🏡 Market', cls: 'pill-green' }],
     3:  [{ text: '🏡 Market', cls: 'pill-green' }, { text: '🧺 Hamper Drop off Opens', cls: 'pill-green' }]],
     4:  [{ text: '🎭 Christmas Carol', cls: 'pill-red' }, { text: '🏡 Market', cls: 'pill-green' }, { text: '🧺 Hamper Drop Off', cls: 'pill-green' }],
-    5:  [{ text: '🎅 Santa Arrives!', cls: 'pill-green' }, { text: '🎭 Christmas Carol', cls: 'pill-red' }, { text: '🎠 Kids Fun Zone', cls: 'pill-green' }, { text: '🏡 Market', cls: 'pill-green' }, { text: '🧺 Hamper Drop Off', cls: 'pill-green' }],
+    5:  [{ text: '🎅 Santa Arrives!', cls: 'pill-green' }, { text: '🩴 Thong Throwing', cls: 'pill-red' }, { text: '🎭 Christmas Carol', cls: 'pill-red' }, { text: '🎠 Kids Fun Zone', cls: 'pill-green' }, { text: '🏡 Market', cls: 'pill-green' }, { text: '🧺 Hamper Drop Off', cls: 'pill-green' }],
     6:  [{ text: '🎬 Outdoor Cinema', cls: 'pill-pink' }, { text: '🎠 Kids Fun Zone', cls: 'pill-green' }, { text: '🏡 Market', cls: 'pill-green' }, { text: '🧺 Hamper Drop Off', cls: 'pill-green' }],
     7:  [{ text: '🎭 Christmas Carol', cls: 'pill-red' }, { text: '🏡 Market', cls: 'pill-green' }, { text: '🧺 Hamper Drop Off', cls: 'pill-green' }],
     8:  [{ text: '🎵 Carols on Green', cls: 'pill-yellow' }],
@@ -859,7 +859,7 @@
       num.textContent = day;
       cell.appendChild(num);
       if (fest && events[day]) {
-        events[day].slice(0, 2).forEach(ev => {
+        events[day].slice(0, 5).forEach(ev => {
           const pill = document.createElement('span');
           pill.className = 'cal-event-pill ' + ev.cls;
           pill.textContent = ev.text;
