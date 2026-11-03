@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Festival Map — Hollybrook Christmas Festival 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-bright: #00A83A;
+    --green-dark:   #006630;
+    --red:          #CC1010;
+    --white:        #FFFFFF;
+    --light-1:      #F4FFF7;
+    --light-2:      #EAFAF0;
+    --light-text:   #0D200F;
+    --light-muted:  #2E5235;
+    --pink:         #FF3DB4;
+    --purple:       #7B3DF5;
+    --cyan:         #00C8F0;
+    --orange:       #FF6B00;
+    --lime:         #A0E020;
+    --yellow:       #CC1010;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--light-1);
+    color: var(--light-text);
+    overflow-x: hidden;
+  }
+
+  /* ── FLOATING BAUBLES ── */
+  .particle-container {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 0; overflow: hidden;
+  }
+  .particle {
+    position: absolute; top: -20px;
+    border-radius: 50%;
+    animation: floatBauble linear infinite;
+  }
+  @keyframes floatBauble {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(244,255,247,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 3px solid var(--green-bright);
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 3rem;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  }
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--green-dark);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+  }
+  .nav-brand span { color: var(--red); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--light-text);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--red); }
+  .nav-links a.active { color: var(--green-dark); border-bottom: 2px solid var(--green-bright); padding-bottom: 2px; }
+
+  /* ── RAINBOW STRIPE ── */
+  .rainbow-stripe {
+    width: 100%; height: 6px;
+    background: linear-gradient(90deg,
+      var(--red) 0%, var(--orange) 16%,
+      var(--yellow) 32%, var(--lime) 48%,
+      var(--cyan) 64%, var(--purple) 80%,
+      var(--pink) 100%
+    );
+    position: relative; z-index: 1;
+  }
+
+  /* ── PAGE HERO ── */
+  .page-hero {
+    padding: 7rem 2rem 3rem;
+    text-align: center;
+    background: var(--light-1);
+    position: relative; z-index: 1;
+  }
+  .page-eyebrow {
+    font-size: 0.8rem; font-weight: 800;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--green-dark); margin-bottom: 0.5rem;
+  }
+  .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 1; letter-spacing: 0.05em;
+    color: var(--light-text);
+  }
+  .page-title em { color: var(--red); font-style: normal; }
+  .page-subtitle {
+    margin-top: 0.75rem;
+    font-size: 1rem; color: var(--light-muted);
+    max-width: 520px; margin-left: auto; margin-right: auto;
+    line-height: 1.7;
+  }
+
+  /* ── MAP SECTION ── */
+  .map-section {
+    position: relative; z-index: 1;
+    padding: 2rem 2rem 4rem;
+    background: var(--light-1);
+  }
+  .map-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--white);
+    border: 3px solid var(--green-bright);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+    overflow: hidden;
+    position: relative;
+  }
+  .map-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* ── ZOOM CONTROLS ── */
+  .zoom-controls {
+    position: absolute;
+    bottom: 1rem; right: 1rem;
+    display: flex; flex-direction: column; gap: 0.4rem;
+    z-index: 10;
+  }
+  .zoom-btn {
+    width: 36px; height: 36px;
+    background: var(--white);
+    border: 2px solid var(--green-bright);
+    color: var(--green-dark);
+    font-size: 1.2rem; font-weight: 900;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .zoom-btn:hover { background: var(--green-bright); color: var(--white); }
+
+  /* ── DOWNLOAD STRIP ── */
+  .map-actions {
+    max-width: 1200px;
+    margin: 1rem auto 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+  .btn-dl {
+    background: var(--green-dark);
+    color: var(--white);
+    border: none;
+    padding: 0.65rem 1.5rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem; letter-spacing: 0.1em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .btn-dl:hover { background: var(--green-bright); transform: translateY(-2px); }
+
+  /* ── VENUE KEY ── */
+  .venue-section {
+    position: relative; z-index: 1;
+    background: var(--light-2);
+    padding: 3rem 2rem;
+  }
+  .venue-inner { max-width: 1200px; margin: 0 auto; }
+  .venue-section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; letter-spacing: 0.08em;
+    color: var(--light-text); margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  .venue-section h2 em { color: var(--red); font-style: normal; }
+  .venue-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  .venue-card {
+    background: var(--white);
+    border: 1px solid rgba(0,168,58,0.2);
+    border-left: 4px solid var(--green-bright);
+    padding: 1rem 1.25rem;
+    display: flex; align-items: flex-start; gap: 0.75rem;
+  }
+  .venue-card.highlight { border-left-color: var(--red); }
+  .venue-icon { font-size: 1.6rem; flex-shrink: 0; line-height: 1.2; }
+  .venue-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem; letter-spacing: 0.04em;
+    color: var(--light-text); line-height: 1.2;
+  }
+  .venue-desc {
+    font-size: 0.8rem; color: var(--light-muted);
+    line-height: 1.5; margin-top: 0.2rem;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--green-dark);
+    border-top: 3px solid var(--green-bright);
+    padding: 2rem 2rem 1.5rem;
+    text-align: center;
+    position: relative; z-index: 1;
+  }
+  .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .footer-links a {
+    color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    font-size: 0.82rem; font-weight: 800;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--white); }
+  .footer-copy { font-size: 0.75rem; color: rgba(255,255,255,0.35); line-height: 1.8; }
+
+  @media (max-width: 768px) {
+    nav { padding: 0.85rem 1.5rem; }
+    .nav-links { gap: 1.25rem; }
+    .zoom-controls { display: none; }
+  }
+  @media (max-width: 480px) { .nav-links { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="particle-container" id="particleContainer"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="hollybrook-festival.html" class="nav-brand">HOLLY<span>BROOK</span></a>
+  <ul class="nav-links">
+    <li><a href="hollybrook-festival.html#about">About</a></li>
+    <li><a href="hollybrook-festival.html#events">Events</a></li>
+    <li><a href="hollybrook-festival.html#calendar">Calendar</a></li>
+    <li><a href="hollybrook-map-page.html" class="active">Map</a></li>
+    <li><a href="hollybrook-festival.html#visit">Visit</a></li>
+    <li><a href="hollybrook-festival.html#social">Follow Us</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <p class="page-eyebrow">Find Your Way Around</p>
+  <h1 class="page-title">Town <em>Map</em></h1>
+  <p class="page-subtitle">Explore Hollybrook and all your favourite festival venues. Click the map to zoom in, or download a copy to bring with you on the day.</p>
+</div>
+
+<div class="rainbow-stripe"></div>
+
+<!-- MAP -->
+<div class="map-section">
+  <div class="map-container" id="mapContainer">
+    <img src="hollybrook-map.png" alt="Hollybrook Town Map — Christmas Festival 2026" id="mapImg">
+    <div class="zoom-controls">
+      <button class="zoom-btn" onclick="zoomIn()" title="Zoom in">+</button>
+      <button class="zoom-btn" onclick="zoomOut()" title="Zoom out">−</button>
+      <button class="zoom-btn" onclick="zoomReset()" title="Reset" style="font-size:0.75rem;font-weight:900;">↺</button>
+    </div>
+  </div>
+  <div class="map-actions">
+    <a href="hollybrook-map.png" download="hollybrook-festival-map.png" class="btn-dl">⬇ Download Map</a>
+  </div>
+</div>
+
+<div class="rainbow-stripe"></div>
+
+<!-- VENUE KEY -->
+<div class="venue-section">
+  <div class="venue-inner">
+    <h2>Festival <em>Venues</em></h2>
+    <div class="venue-grid">
+      <div class="venue-card highlight">
+        <div class="venue-icon">🌟</div>
+        <div>
+          <div class="venue-name">Town Square & Main Street</div>
+          <div class="venue-desc">Festival hub. Opening Ceremony, Grand Parade route, Info Tent, and daily market stalls along River Walk.</div>
+        </div>
+      </div>
+      <div class="venue-card highlight">
+        <div class="venue-icon">🎺</div>
+        <div>
+          <div class="venue-name">Holly Street</div>
+          <div class="venue-desc">Grand Christmas Parade route — Dec 14 from 6 PM. Line the kerb early for the best views!</div>
+        </div>
+      </div>
+      <div class="venue-card">
+        <div class="venue-icon">🏟</div>
+        <div>
+          <div class="venue-name">Football Field / Hollybrook Oval</div>
+          <div class="venue-desc">Carols by Candlelight (Dec 19), Outdoor Cinema evenings (Dec 6, 13, 20), and Kids Fun Zone on weekends.</div>
+        </div>
+      </div>
+      <div class="venue-card">
+        <div class="venue-icon">🎅</div>
+        <div>
+          <div class="venue-name">The Post Office</div>
+          <div class="venue-desc">Santa's Shack operates weekends and evenings Dec 5–23. Also home to the Thong Throwing Championship on Dec 5!</div>
+        </div>
+      </div>
+      <div class="venue-card">
+        <div class="venue-icon">🎭</div>
+        <div>
+          <div class="venue-name">Hollybrook High School</div>
+          <div class="venue-desc">A Christmas Carol performances — Dec 4, 5 & 11 at 7:30 PM. Tickets $12 adults / $6 children.</div>
+        </div>
+      </div>
+      <div class="venue-card">
+        <div class="venue-icon">🎂</div>
+        <div>
+          <div class="venue-name">Community Centre</div>
+          <div class="venue-desc">Christmas Bake-Off on Dec 12, 10 AM–2 PM. Enter your pav or lamington — free tastings for all!</div>
+        </div>
+      </div>
+      <div class="venue-card">
+        <div class="venue-icon">🧺</div>
+        <div>
+          <div class="venue-name">Hollybrook Primary School</div>
+          <div class="venue-desc">Vinnies Hamper donation drop-off point Dec 3–20. Bring your favourite Christmas food items.</div>
+        </div>
+      </div>
+      <div class="venue-card">
+        <div class="venue-icon">🎬</div>
+        <div>
+          <div class="venue-name">Bicentennial Park</div>
+          <div class="venue-desc">Outdoor Cinema under the stars on Dec 6, 13 & 20 at dusk. BYO rug and picnic. $5 per person.</div>
+        </div>
+      </div>
+      <div class="venue-card">
+        <div class="venue-icon">🅿️</div>
+        <div>
+          <div class="venue-name">Hollybrook Showgrounds</div>
+          <div class="venue-desc">Free festival parking with a shuttle bus to Town Square every 15 minutes throughout the festival.</div>
+        </div>
+      </div>
+      <div class="venue-card">
+        <div class="venue-icon">🌅</div>
+        <div>
+          <div class="venue-name">Town Square (Christmas Eve)</div>
+          <div class="venue-desc">Grand finale! Sunset Celebration from 7 PM, community carols, live music, and fireworks over the river at 9 PM.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <nav class="footer-links">
+    <a href="hollybrook-festival.html">Home</a>
+    <a href="hollybrook-festival.html#about">About</a>
+    <a href="hollybrook-festival.html#events">Events</a>
+    <a href="hollybrook-festival.html#calendar">Calendar</a>
+    <a href="hollybrook-map-page.html">Map</a>
+    <a href="hollybrook-festival.html#visit">Visit</a>
+    <a href="https://bsky.app/profile/hollybrookfestival.bsky.social" target="_blank">Bluesky</a>
+  </nav>
+  <p class="footer-copy">© 2026 Hollybrook Christmas Festival Committee. All rights reserved.</p>
+</footer>
+
+<script>
+  // ── FLOATING BAUBLES ──
+  const colours = ['#CC1010','#F5C800','#FF3DB4','#7B3DF5','#FF6B00','#00C8F0','#A0E020','#00A83A'];
+  const pc = document.getElementById('particleContainer');
+  for (let i = 0; i < 40; i++) {
+    const d = document.createElement('div');
+    d.className = 'particle';
+    const size = Math.random() * 10 + 5;
+    d.style.cssText = `
+      left:${Math.random()*100}vw;
+      width:${size}px; height:${size}px;
+      background:${colours[Math.floor(Math.random()*colours.length)]};
+      animation-duration:${Math.random()*14+10}s;
+      animation-delay:-${Math.random()*14}s;
+      opacity:${Math.random()*0.4+0.15};
+    `;
+    pc.appendChild(d);
+  }
+
+  // ── ZOOM ──
+  let scale = 1;
+  const img = document.getElementById('mapImg');
+  const container = document.getElementById('mapContainer');
+
+  function applyZoom() {
+    img.style.transform = `scale(${scale})`;
+    img.style.transformOrigin = 'top left';
+    img.style.width = (100 / scale) + '%';
+    container.style.overflow = scale > 1 ? 'auto' : 'hidden';
+  }
+  function zoomIn()    { scale = Math.min(scale + 0.25, 3); applyZoom(); }
+  function zoomOut()   { scale = Math.max(scale - 0.25, 1); applyZoom(); }
+  function zoomReset() { scale = 1; applyZoom(); }
+
+  // Click to zoom in, double-click to reset
+  img.addEventListener('click', zoomIn);
+  img.addEventListener('dblclick', (e) => { e.preventDefault(); zoomReset(); });
+</script>
+</body>
+</html>
