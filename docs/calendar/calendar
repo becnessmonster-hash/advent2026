@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Naughty or Nice – Hollybrook Advent Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-bright: #00A83A;
+    --green-dark:   #006630;
+    --red:          #CC1010;
+    --white:        #FFFFFF;
+    --gold:         #E0A800;
+    --light-1:      #F4FFF7;
+    --light-text:   #0D200F;
+    --light-muted:  #2E5235;
+    --nice-bg:      #E3F8E9;
+    --naughty-bg:   #FDE6E6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--light-1);
+    color: var(--light-text);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+
+  /* ── NAV (matches festival site) ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(244,255,247,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 3px solid var(--green-bright);
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 3rem;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  }
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--green-dark);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+  }
+  .nav-brand span { color: var(--red); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.82rem; font-weight: 800;
+    color: var(--light-text); text-decoration: none;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--red); }
+  .nav-links a.active { color: var(--green-dark); border-bottom: 2px solid var(--green-bright); padding-bottom: 2px; }
+  @media (max-width: 900px) {
+    nav { padding: 0.85rem 1.5rem; }
+    .nav-links { gap: 1.25rem; }
+  }
+  @media (max-width: 480px) { .nav-links { display: none; } }
+
+  /* floating baubles, as on the festival site */
+  .particle-container { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .particle { position: absolute; top: -20px; border-radius: 50%; animation: floatBauble linear infinite; }
+  @keyframes floatBauble {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  .inner { max-width: 1100px; margin: 0 auto; padding: 6rem 1.5rem 3rem; position: relative; z-index: 1; }
+
+  .brand { text-align: center; font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.08em; color: var(--green-dark); }
+  .brand span { color: var(--red); }
+  .eyebrow { text-align: center; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--red); }
+  h1 { text-align: center; font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: clamp(2.6rem, 7vw, 4.2rem); letter-spacing: 0.03em; line-height: 1; color: var(--green-dark); }
+  h1 em { font-style: normal; color: var(--red); }
+
+  .story {
+    max-width: 680px; margin: 1.25rem auto 0; text-align: center;
+    font-size: 1rem; line-height: 1.7; color: var(--light-muted);
+  }
+  .rules {
+    max-width: 760px; margin: 1.5rem auto 0;
+    background: var(--white); border: 2px solid var(--green-bright);
+    padding: 1rem 1.25rem; font-size: 0.9rem; line-height: 1.6;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 1.5rem;
+  }
+  .rules div::before { content: '🎄 '; }
+
+  .status-bar {
+    display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;
+    margin: 1.75rem 0 1rem; font-weight: 800; font-size: 0.85rem;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--light-muted);
+  }
+  .status-bar b { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 1.5rem; color: var(--green-dark); letter-spacing: 0.04em; margin-left: 0.3rem; }
+  .status-bar .mistakes b { color: var(--red); }
+
+  /* ── CALENDAR (matches festival site) ── */
+  .calendar-wrapper { background: var(--white); border: 2px solid var(--green-bright); overflow: hidden; box-shadow: 0 4px 30px rgba(0,0,0,0.08); }
+  .calendar-header { background: var(--green-dark); padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: center; gap: 1rem; }
+  .calendar-header h2 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 1.8rem; letter-spacing: 0.1em; color: var(--white); }
+  .cal-grid-header { display: grid; grid-template-columns: repeat(7, 1fr); background: var(--green-bright); }
+  .cal-day-name { padding: 0.6rem 0.2rem; text-align: center; font-size: 0.72rem; font-weight: 800; color: var(--white); letter-spacing: 0.1em; text-transform: uppercase; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+
+  .cal-day {
+    min-height: 128px;
+    border-right: 1px solid rgba(0,168,58,0.15);
+    border-bottom: 1px solid rgba(0,168,58,0.15);
+    padding: 0.55rem; position: relative;
+    background: var(--white);
+    display: flex; flex-direction: column;
+  }
+  .cal-day:nth-child(7n) { border-right: none; }
+  .cal-day:nth-last-child(-n+7) { border-bottom: none; }
+  .cal-day.empty { background: #F8FFF9; }
+  .cal-day.empty .cal-day-num { color: #CCC; }
+  .cal-day.xmas { background: #FFF9E6; }
+  .cal-day.xmas .xmas-star { font-size: 1.6rem; margin-top: 0.3rem; }
+
+  .cal-day-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--light-text); display: block; line-height: 1; }
+
+  /* closed door */
+  .door { cursor: pointer; background: #F0FFF4; transition: background 0.15s, transform 0.15s; }
+  .door:hover { background: #E0FFE9; }
+  .door:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; z-index: 2; }
+  .door::after { content: '🎁'; position: absolute; right: 5px; top: 5px; font-size: 0.85rem; }
+  .who { font-weight: 900; font-size: 0.86rem; margin-top: 0.35rem; line-height: 1.2; }
+  .role { font-size: 0.68rem; color: var(--light-muted); line-height: 1.3; margin-top: 0.1rem; }
+
+  /* opened door */
+  .open.nice { background: var(--nice-bg); }
+  .open.naughty { background: var(--naughty-bg); }
+  .verdict {
+    align-self: flex-start; margin-top: 0.35rem;
+    font-size: 0.6rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.12rem 0.4rem; color: var(--white);
+  }
+  .nice .verdict { background: var(--green-bright); }
+  .naughty .verdict { background: var(--red); }
+  .open::after { position: absolute; right: 5px; top: 5px; font-size: 0.85rem; }
+  .open.nice::after { content: '😇'; }
+  .open.naughty::after { content: '😈'; }
+  .clue { font-size: 0.72rem; line-height: 1.35; margin-top: 0.35rem; font-weight: 700; color: var(--light-text); cursor: pointer; }
+  .open { cursor: pointer; }
+  .clue.used { opacity: 0.45; text-decoration: line-through; }
+  .flip { animation: flip 0.5s ease; }
+  @keyframes flip { 0% { transform: rotateY(90deg); } 100% { transform: rotateY(0); } }
+  .shake { animation: shake 0.4s ease; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+  .hint-line { text-align: center; font-size: 0.82rem; color: var(--light-muted); margin-top: 1rem; }
+
+  /* clue list (for small screens) */
+  .notes { margin-top: 2rem; display: none; }
+  .notes h3 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 1.5rem; letter-spacing: 0.05em; color: var(--green-dark); margin-bottom: 0.5rem; }
+  .notes ol { list-style: none; background: var(--white); border: 2px solid var(--green-bright); }
+  .notes li { padding: 0.55rem 0.8rem; border-bottom: 1px solid rgba(0,168,58,0.15); font-size: 0.88rem; line-height: 1.45; cursor: pointer; }
+  .notes li:last-child { border-bottom: none; }
+  .notes li b { color: var(--green-dark); }
+  .notes li.naughty b { color: var(--red); }
+  .notes li.used { opacity: 0.45; text-decoration: line-through; }
+
+  /* modal */
+  .overlay { position: fixed; inset: 0; background: rgba(6,30,12,0.6); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; }
+  .overlay.show { display: flex; }
+  .modal { background: var(--white); border: 3px solid var(--green-bright); max-width: 420px; width: 100%; padding: 1.75rem 1.5rem 1.5rem; text-align: center; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .modal .m-day { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.15em; color: var(--red); }
+  .modal .m-name { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; line-height: 1; color: var(--green-dark); margin-top: 0.2rem; }
+  .modal .m-role { font-size: 0.88rem; color: var(--light-muted); margin-top: 0.2rem; }
+  .modal .m-q { font-weight: 800; margin-top: 1.1rem; }
+  .choices { display: flex; gap: 0.75rem; margin-top: 0.9rem; }
+  .choices button {
+    flex: 1; font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.06em;
+    padding: 0.6rem 0.5rem; border: none; cursor: pointer; color: var(--white);
+    transition: transform 0.12s, filter 0.12s;
+  }
+  .choices button:hover { transform: translateY(-2px); filter: brightness(1.08); }
+  .btn-nice { background: var(--green-bright); }
+  .btn-naughty { background: var(--red); }
+  .feedback { min-height: 2.6rem; margin-top: 0.9rem; font-size: 0.88rem; font-weight: 700; line-height: 1.45; }
+  .feedback.warn { color: #8A6200; }
+  .feedback.bad { color: var(--red); }
+  .close-x { position: absolute; top: 0.4rem; right: 0.7rem; background: none; border: none; font-size: 1.6rem; cursor: pointer; color: var(--light-muted); }
+  .m-clue { margin-top: 1rem; background: var(--light-1); border-left: 4px solid var(--green-bright); padding: 0.75rem; text-align: left; font-weight: 700; font-size: 0.95rem; line-height: 1.5; }
+  .naughty-card .m-clue { border-left-color: var(--red); }
+
+  /* finale */
+  .finale .modal { border-color: var(--gold); background: var(--green-dark); color: var(--white); padding: 2.25rem 1.5rem 1.75rem; }
+  .finale .big { font-size: 3rem; }
+  .finale .fin-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.2em; color: #FFD54A; margin-top: 0.5rem; }
+  .finale .fin-msg { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.2rem, 8vw, 3rem); line-height: 1.05; margin-top: 0.6rem; letter-spacing: 0.03em; }
+  .finale .close-btn { margin-top: 1.4rem; background: transparent; border: 1px solid rgba(255,255,255,0.5); color: var(--white); padding: 0.45rem 1.4rem; font-family: 'Nunito', sans-serif; font-weight: 800; cursor: pointer; }
+
+  /* gate */
+  .gate { text-align: center; margin: 3rem auto; max-width: 520px; background: var(--white); border: 2px solid var(--green-bright); padding: 2rem 1.5rem; }
+  .gate .g-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--green-dark); }
+  .gate p { margin-top: 0.5rem; color: var(--light-muted); }
+  .gate .count { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--red); margin-top: 0.8rem; letter-spacing: 0.04em; }
+
+  footer { text-align: center; font-size: 0.75rem; color: var(--light-muted); padding: 1rem; position: relative; z-index: 1; }
+
+  @media (max-width: 760px) {
+    .inner { padding: 5rem 0.6rem 2rem; }
+    .rules { grid-template-columns: 1fr; margin-left: 0.6rem; margin-right: 0.6rem; }
+    .cal-day { min-height: 78px; padding: 0.3rem 0.25rem; }
+    .cal-day-num { font-size: 1rem; }
+    .who { font-size: 0.66rem; margin-top: 0.25rem; word-break: break-word; }
+    .role, .clue { display: none; }
+    .door::after, .open::after { font-size: 0.7rem; top: 3px; right: 3px; }
+    .verdict { font-size: 0.5rem; padding: 0.08rem 0.25rem; letter-spacing: 0.04em; }
+    .cal-day-name { font-size: 0.62rem; letter-spacing: 0.04em; }
+    .notes { display: block; }
+    .calendar-header { padding: 0.9rem 1rem; gap: 0.6rem; }
+    .calendar-header h2 { font-size: 1.4rem; white-space: nowrap; }
+    .calendar-header span { font-size: 1.2rem !important; }
+  }
+</style>
+</head>
+<body>
+<div class="particle-container" id="particles"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="../index.html" class="nav-brand">HOLLY<span>BROOK</span></a>
+  <ul class="nav-links">
+    <li><a href="../index.html#about">About</a></li>
+    <li><a href="../index.html#events">Events</a></li>
+    <li><a href="../index.html#calendar">Calendar</a></li>
+    <li><a href="../map/hollybrook-map-page.html">Map</a></li>
+    <li><a href="index.html" class="active">Advent</a></li>
+    <li><a href="../index.html#visit">Visit</a></li>
+    <li><a href="../index.html#social">Follow Us</a></li>
+  </ul>
+</nav>
+
+<div class="inner">
+  <p class="eyebrow">Advent Calendar Puzzle</p>
+  <h1>Naughty <em>or</em> Nice?</h1>
+  <p class="story">Santa's list for Hollybrook blew away in a summer southerly. Twenty-four locals are hiding behind the doors of this year's calendar, and every one of them is either on the Naughty list or the Nice list. Mayor Maggie has already opened her door. Use what each person tells you to work out where everyone belongs.</p>
+
+  <div id="gate" class="gate" hidden>
+    <div class="g-title">The doors are still shut</div>
+    <p>All 24 doors open on 1 December.</p>
+    <div class="count" id="countdown"></div>
+  </div>
+
+  <div id="game" hidden>
+    <div class="rules">
+      <div>Everyone tells the truth.</div>
+      <div>Neighbours are the doors touching yours, including diagonally.</div>
+      <div>Tap a door and choose Naughty or Nice.</div>
+      <div>You can only open a door once the clues prove it. No guessing!</div>
+    </div>
+
+    <div class="status-bar">
+      <span>Opened <b id="openedCount">1 / 24</b></span>
+      <span class="mistakes">Mistakes <b id="mistakeCount">0</b></span>
+    </div>
+
+    <div class="calendar-wrapper">
+      <div class="calendar-header">
+        <span style="font-size:1.6rem">🎄</span>
+        <h2>December 2026</h2>
+        <span style="font-size:1.6rem">🌟</span>
+      </div>
+      <div class="cal-grid-header">
+        <div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div><div class="cal-day-name">Tue</div>
+        <div class="cal-day-name">Wed</div><div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div><div class="cal-day-name">Sat</div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+    <p class="hint-line">Tip: tap a clue to cross it off once you've finished with it.</p>
+
+    <div class="notes" id="notes">
+      <h3>Clues so far</h3>
+      <ol id="notesList"></ol>
+    </div>
+  </div>
+</div>
+
+<footer>Questions? <a href="mailto:hollybrookchristmas87@outlook.com">hollybrookchristmas87@outlook.com</a></footer>
+
+<!-- door modal -->
+<div class="overlay" id="doorOverlay" role="dialog" aria-modal="true">
+  <div class="modal" id="doorModal">
+    <button class="close-x" onclick="closeDoor()" aria-label="Close">×</button>
+    <div class="m-day" id="mDay"></div>
+    <div class="m-name" id="mName"></div>
+    <div class="m-role" id="mRole"></div>
+    <div id="mAsk">
+      <p class="m-q" id="mQ"></p>
+      <div class="choices">
+        <button class="btn-naughty" onclick="choose(1)">😈 Naughty</button>
+        <button class="btn-nice" onclick="choose(0)">😇 Nice</button>
+      </div>
+      <p class="feedback" id="mFeedback"></p>
+    </div>
+    <div id="mOpen" hidden>
+      <div class="m-clue" id="mClue"></div>
+    </div>
+  </div>
+</div>
+
+<!-- finale -->
+<div class="overlay finale" id="finale" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="big">🎄</div>
+    <div class="fin-title">Santa's list is complete</div>
+    <div class="fin-msg" id="finMsg"></div>
+    <button class="close-btn" onclick="document.getElementById('finale').classList.remove('show')">Close</button>
+  </div>
+</div>
+
+<script>
+/* ───────── PUZZLE DATA ───────── */
+const PEOPLE = [{"d":1,"name":"Mayor Maggie","role":"opens the festival","A":[20],"B":[],"ok":[1],"clue":"Kylie (20) is naughty."},{"d":2,"name":"Bazza","role":"runs the sausage sizzle","A":[1,2,3,4,5],"B":[],"ok":[2],"clue":"Week 1 (1–5 Dec) has exactly 2 naughty people."},{"d":3,"name":"Shaz","role":"sings in the choir","A":[19,20],"B":[],"ok":[0,2],"clue":"Hamish (19) and Kylie (20) are on the same list."},{"d":4,"name":"Kev","role":"surf club lifeguard","A":[3,5,10,11,12],"B":[],"ok":[3],"clue":"Exactly 3 of my neighbours are naughty."},{"d":5,"name":"Nana Joan","role":"Bake-Off champion","A":[6,7,14,20,21],"B":[13,14,15,20,22],"ok":[1,2,3,4,5,6,7,8],"clue":"Raj (13) has more naughty neighbours than Sal (21)."},{"d":6,"name":"Dazza","role":"thong-throwing legend","A":[5,12,19],"B":[],"ok":[3],"clue":"Exactly 3 of the Saturday doors are naughty."},{"d":7,"name":"Priya","role":"market stallholder","A":[6,7,14,20,21],"B":[],"ok":[2],"clue":"Raj (13) has exactly 2 naughty neighbours."},{"d":8,"name":"Tom","role":"Santa's helper","A":[2,7,8,9],"B":[],"ok":[1],"clue":"Mayor Maggie (1) has exactly 1 naughty neighbour."},{"d":9,"name":"Lou","role":"drives the ice-cream van","A":[8,9,10,15,17,22,23,24],"B":[15,16,17,22,24],"ok":[1,2,3,4,5,6,7,8],"clue":"Gran Doris (16) has more naughty neighbours than Fiona (23)."},{"d":10,"name":"Jules","role":"face painter","A":[3,10,17,24],"B":[],"ok":[2],"clue":"Exactly 2 of the Thursday doors are naughty."},{"d":11,"name":"Mick","role":"fireworks crew","A":[3,4,5,10,12,17,18,19],"B":[],"ok":[6],"clue":"Exactly 6 of my neighbours are naughty."},{"d":12,"name":"Aunty Bev","role":"hamper coordinator","A":[6,7,14,20,21],"B":[14,15,16,21,23],"ok":[1,2,3,4,5,6,7,8],"clue":"Raj (13) has more naughty neighbours than Ned (22)."},{"d":13,"name":"Raj","role":"cinema projectionist","A":[19,21],"B":[],"ok":[1],"clue":"Hamish (19) and Sal (21) are on different lists."},{"d":14,"name":"Skye","role":"parade marshal","A":[22],"B":[],"ok":[0],"clue":"Nobody between Sal (21) and Fiona (23) is naughty."},{"d":15,"name":"Ollie","role":"Year 5 at Hollybrook Primary","A":[16,17,18,23],"B":[],"ok":[2],"clue":"Cheryl (24) has exactly 2 naughty neighbours."},{"d":16,"name":"Gran Doris","role":"knits the tree skirts","A":[16,17],"B":[],"ok":[2],"clue":"There are exactly 2 naughty people between Ollie (15) and Tess (18)."},{"d":17,"name":"Wes","role":"Kids Fun Zone","A":[14,20],"B":[],"ok":[1],"clue":"Skye (14) and Kylie (20) are on different lists."},{"d":18,"name":"Tess","role":"florist","A":[1,6,8,13,14,15],"B":[],"ok":[2],"clue":"Priya (7) has exactly 2 naughty neighbours."},{"d":19,"name":"Hamish","role":"parade bagpiper","A":[13,20],"B":[],"ok":[1],"clue":"Raj (13) and Kylie (20) are on different lists."},{"d":20,"name":"Kylie","role":"newsagent","A":[3],"B":[],"ok":[0],"clue":"Nobody between Bazza (2) and Kev (4) is naughty."},{"d":21,"name":"Sal","role":"café owner","A":[16],"B":[],"ok":[1],"clue":"There is exactly 1 naughty person between Ollie (15) and Wes (17)."},{"d":22,"name":"Ned","role":"lighting tech","A":[7,14,21],"B":[],"ok":[0],"clue":"None of the Monday doors are naughty."},{"d":23,"name":"Fiona","role":"conducts the carols","A":[6,7,8,13,15,20,21,22],"B":[7,8,9,14,16,21,22,23],"ok":[1,2,3,4,5,6,7,8],"clue":"Skye (14) has more naughty neighbours than Ollie (15)."},{"d":24,"name":"Cheryl","role":"runs Santa's Shack","A":[4,11,18],"B":[],"ok":[1],"clue":"Exactly 1 of the Friday doors is naughty."}];
+const FINAL = 'T25lIGlzIGF0IHRoZSB3cm9uZyBlbmQ=';                        // base64 of the finale message
+const OPEN_AT = Date.parse('2026-01-01T00:00:00Z'); // TESTING: open now. For launch change to '2026-11-30T13:00:00Z' (midnight 1 Dec, Sydney)
+const STORE = 'hollybrook_naughty_nice_v1';
+
+/* ───────── baubles ───────── */
+(function () {
+  const pc = document.getElementById('particles');
+  const colours = ['#CC1010', '#00A83A', '#E0A800', '#FF3DB4', '#00C8F0'];
+  for (let i = 0; i < 22; i++) {
+    const d = document.createElement('div');
+    d.className = 'particle';
+    const s = Math.random() * 10 + 6;
+    d.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${colours[Math.floor(Math.random()*colours.length)]};animation-duration:${Math.random()*14+10}s;animation-delay:-${Math.random()*14}s;opacity:${Math.random()*0.35+0.12};`;
+    pc.appendChild(d);
+  }
+})();
+
+/* ───────── state ───────── */
+let state = { known: { 1: 0 }, mistakes: 0, used: {}, done: false };
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(STORE)); if (s && s.known) state = s; } catch (e) {}
+}
+function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
+
+/* ───────── logic engine ─────────
+   A choice is accepted only if the opened doors' clues force it.
+   We test whether the opposite answer could still fit every revealed clue. */
+function constraints() {
+  return Object.keys(state.known).map(d => {
+    const p = PEOPLE[d - 1];
+    return { A: p.A.map(x => x - 1), B: p.B.map(x => x - 1), ok: new Set(p.ok) };
+  });
+}
+function feasible(cons, val) {
+  for (const c of cons) {
+    let lo = 0, hi = 0;
+    for (const i of c.A) { if (val[i] === 1) { lo++; hi++; } else if (val[i] === -1) hi++; }
+    for (const i of c.B) { if (val[i] === 1) { lo--; hi--; } else if (val[i] === -1) lo--; }
+    let any = false;
+    for (const v of c.ok) if (v >= lo && v <= hi) { any = true; break; }
+    if (!any) return false;
+  }
+  return true;
+}
+function satisfiable(fixed) {
+  const cons = constraints();
+  const val = new Array(24).fill(-1);
+  for (const d in fixed) val[d - 1] = fixed[d];
+  // only doors mentioned by a clue matter; everything else is free
+  const relevant = new Set();
+  cons.forEach(c => { c.A.forEach(i => relevant.add(i)); c.B.forEach(i => relevant.add(i)); });
+  const order = [...relevant].filter(i => val[i] === -1);
+  function dfs(k) {
+    if (!feasible(cons, val)) return false;
+    if (k === order.length) return true;
+    const i = order[k];
+    for (const v of [0, 1]) { val[i] = v; if (dfs(k + 1)) { val[i] = -1; return true; } }
+    val[i] = -1;
+    return false;
+  }
+  return dfs(0);
+}
+function judge(day, pick) {
+  const base = { ...state.known };
+  const canPick = satisfiable({ ...base, [day]: pick });
+  const canOther = satisfiable({ ...base, [day]: 1 - pick });
+  if (!canPick) return 'wrong';
+  if (canOther) return 'unsure';
+  return 'right';
+}
+
+/* ───────── rendering ───────── */
+const START = 2; // 1 Dec 2026 is a Tuesday
+const grid = document.getElementById('calGrid');
+const cells = {};
+
+function buildGrid() {
+  grid.innerHTML = '';
+  const total = Math.ceil((START + 31) / 7) * 7;
+  for (let i = 0; i < total; i++) {
+    const day = i - START + 1;
+    const cell = document.createElement('div');
+    cell.className = 'cal-day';
+    const num = document.createElement('span');
+    num.className = 'cal-day-num';
+    if (day < 1 || day > 31) {
+      cell.classList.add('empty');
+      num.textContent = day < 1 ? 30 + day : day - 31;
+      cell.appendChild(num);
+    } else if (day > 24) {
+      cell.classList.add(day === 25 ? 'xmas' : 'empty');
+      num.textContent = day;
+      cell.appendChild(num);
+      if (day === 25) { const s = document.createElement('div'); s.className = 'xmas-star'; s.textContent = '⭐'; cell.appendChild(s); }
+    } else {
+      num.textContent = day;
+      cell.appendChild(num);
+      cell.dataset.day = day;
+      cell.tabIndex = 0;
+      cell.addEventListener('click', e => {
+        if (e.target.classList.contains('clue')) { toggleUsed(day); return; }
+        openDoor(day);
+      });
+      cell.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDoor(day); } });
+      cells[day] = cell;
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function renderCell(day, animate) {
+  const p = PEOPLE[day - 1];
+  const cell = cells[day];
+  const num = cell.querySelector('.cal-day-num');
+  cell.innerHTML = '';
+  cell.appendChild(num);
+  cell.classList.remove('door', 'open', 'nice', 'naughty');
+  const who = document.createElement('div'); who.className = 'who'; who.textContent = p.name;
+  cell.appendChild(who);
+  if (day in state.known) {
+    const naughty = state.known[day] === 1;
+    cell.classList.add('open', naughty ? 'naughty' : 'nice');
+    const v = document.createElement('span'); v.className = 'verdict'; v.textContent = naughty ? 'Naughty' : 'Nice';
+    cell.appendChild(v);
+    const c = document.createElement('div'); c.className = 'clue' + (state.used[day] ? ' used' : ''); c.textContent = p.clue;
+    cell.appendChild(c);
+    cell.setAttribute('aria-label', `${day} December, ${p.name}, ${naughty ? 'naughty' : 'nice'}. Clue: ${p.clue}`);
+    if (animate) { cell.classList.remove('flip'); void cell.offsetWidth; cell.classList.add('flip'); }
+  } else {
+    cell.classList.add('door');
+    const r = document.createElement('div'); r.className = 'role'; r.textContent = p.role;
+    cell.appendChild(r);
+    cell.setAttribute('aria-label', `${day} December, ${p.name}, door closed`);
+  }
+}
+
+function renderNotes() {
+  const list = document.getElementById('notesList');
+  list.innerHTML = '';
+  Object.keys(state.known).map(Number).sort((a, b) => a - b).forEach(d => {
+    const p = PEOPLE[d - 1];
+    const li = document.createElement('li');
+    if (state.known[d] === 1) li.classList.add('naughty');
+    if (state.used[d]) li.classList.add('used');
+    li.innerHTML = `<b>${d} · ${p.name}:</b> `;
+    li.appendChild(document.createTextNode(p.clue));
+    li.addEventListener('click', () => toggleUsed(d));
+    list.appendChild(li);
+  });
+}
+
+function renderStatus() {
+  document.getElementById('openedCount').textContent = Object.keys(state.known).length + ' / 24';
+  document.getElementById('mistakeCount').textContent = state.mistakes;
+}
+
+function renderAll() {
+  for (let d = 1; d <= 24; d++) renderCell(d, false);
+  renderNotes(); renderStatus();
+}
+
+function toggleUsed(day) {
+  state.used[day] = !state.used[day];
+  save(); renderCell(day, false); renderNotes();
+}
+
+/* ───────── door modal ───────── */
+let current = null;
+function openDoor(day) {
+  current = day;
+  const p = PEOPLE[day - 1];
+  const opened = day in state.known;
+  document.getElementById('mDay').textContent = day + ' December';
+  document.getElementById('mName').textContent = p.name;
+  document.getElementById('mRole').textContent = p.role.charAt(0).toUpperCase() + p.role.slice(1);
+  document.getElementById('mAsk').hidden = opened;
+  document.getElementById('mOpen').hidden = !opened;
+  const modal = document.getElementById('doorModal');
+  modal.classList.toggle('naughty-card', opened && state.known[day] === 1);
+  if (opened) {
+    document.getElementById('mClue').textContent = `${state.known[day] ? '😈 Naughty' : '😇 Nice'} · “${p.clue}”`;
+  } else {
+    document.getElementById('mQ').textContent = `Is ${p.name} naughty or nice?`;
+    const fb = document.getElementById('mFeedback'); fb.textContent = ''; fb.className = 'feedback';
+  }
+  document.getElementById('doorOverlay').classList.add('show');
+}
+function closeDoor() { document.getElementById('doorOverlay').classList.remove('show'); current = null; }
+document.getElementById('doorOverlay').addEventListener('click', e => { if (e.target.id === 'doorOverlay') closeDoor(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDoor(); });
+
+function choose(pick) {
+  const day = current; if (!day) return;
+  const fb = document.getElementById('mFeedback');
+  const modal = document.getElementById('doorModal');
+  const result = judge(day, pick);
+  if (result === 'unsure') {
+    fb.className = 'feedback warn';
+    fb.textContent = "Not enough evidence yet. The clues don't prove that so far. Keep looking!";
+    modal.classList.remove('shake'); void modal.offsetWidth; modal.classList.add('shake');
+    return;
+  }
+  if (result === 'wrong') {
+    state.mistakes++; save(); renderStatus();
+    fb.className = 'feedback bad';
+    fb.textContent = "That can't be right. The clues say otherwise.";
+    modal.classList.remove('shake'); void modal.offsetWidth; modal.classList.add('shake');
+    return;
+  }
+  state.known[day] = pick; save();
+  closeDoor();
+  renderCell(day, true); renderNotes(); renderStatus();
+  if (Object.keys(state.known).length === 24 && !state.done) {
+    state.done = true; save();
+    setTimeout(showFinale, 700);
+  }
+}
+
+function showFinale() {
+  document.getElementById('finMsg').textContent = decodeURIComponent(escape(atob(FINAL)));
+  document.getElementById('finale').classList.add('show');
+}
+
+/* ───────── secret reset: Ctrl + Shift + R ───────── */
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.shiftKey && (e.key === 'R' || e.key === 'r')) {
+    e.preventDefault();
+    state = { known: { 1: 0 }, mistakes: 0, used: {}, done: false };
+    save(); renderAll();
+    document.getElementById('finale').classList.remove('show');
+  }
+});
+
+/* ───────── date gate (add ?preview to the URL to test early) ───────── */
+function start() {
+  const preview = new URLSearchParams(location.search).has('preview');
+  if (Date.now() < OPEN_AT && !preview) {
+    document.getElementById('gate').hidden = false;
+    const tick = () => {
+      const ms = OPEN_AT - Date.now();
+      if (ms <= 0) { location.reload(); return; }
+      const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60;
+      document.getElementById('countdown').textContent = `${d} days ${h} hrs ${m} mins`;
+    };
+    tick(); setInterval(tick, 30000);
+    return;
+  }
+  document.getElementById('game').hidden = false;
+  load(); buildGrid(); renderAll();
+  if (state.done) setTimeout(showFinale, 400);
+}
+start();
+</script>
+</body>
+</html>
