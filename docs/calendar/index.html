@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -19,6 +19,7 @@
     --naughty-bg:   #FDE6E6;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { max-width: 100%; overflow-x: hidden; }
   body {
     font-family: 'Nunito', sans-serif;
     background: var(--light-1);
@@ -57,11 +58,34 @@
   }
   .nav-links a:hover { color: var(--red); }
   .nav-links a.active { color: var(--green-dark); border-bottom: 2px solid var(--green-bright); padding-bottom: 2px; }
-  @media (max-width: 900px) {
-    nav { padding: 0.85rem 1.5rem; }
-    .nav-links { gap: 1.25rem; }
+  .nav-toggle { display: none; }
+  @media (max-width: 768px) {
+    nav { padding: 0.85rem 1rem; }
+    .nav-toggle {
+      display: block;
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      color: var(--green-dark);
+      padding: 0.2rem 0.5rem;
+    }
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0; right: 0;
+      background: rgba(244,255,247,0.98);
+      flex-direction: column;
+      gap: 0;
+      padding: 0.5rem 0;
+      border-bottom: 3px solid var(--green-bright);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .nav-links.open { display: flex; }
+    .nav-links li { width: 100%; }
+    .nav-links a { display: block; padding: 0.75rem 2rem; }
   }
-  @media (max-width: 480px) { .nav-links { display: none; } }
 
   /* floating baubles, as on the festival site */
   .particle-container { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
@@ -227,6 +251,7 @@
 <!-- NAV -->
 <nav>
   <a href="../index.html" class="nav-brand">HOLLY<span>BROOK</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
   <ul class="nav-links">
     <li><a href="../index.html#about">About</a></li>
     <li><a href="../index.html#events">Events</a></li>
@@ -322,6 +347,11 @@ const PEOPLE = [{"d":1,"name":"Mayor Maggie","role":"opens the festival","A":[20
 const FINAL = 'T25lIGlzIGF0IHRoZSB3cm9uZyBlbmQ=';                        // base64 of the finale message
 const OPEN_AT = Date.parse('2026-01-01T00:00:00Z'); // TESTING: open now. For launch change to '2026-11-30T13:00:00Z' (midnight 1 Dec, Sydney)
 const STORE = 'hollybrook_naughty_nice_v1';
+
+/* ───────── hamburger ───────── */
+document.getElementById('navToggle').addEventListener('click', () => {
+  document.querySelector('.nav-links').classList.toggle('open');
+});
 
 /* ───────── baubles ───────── */
 (function () {
