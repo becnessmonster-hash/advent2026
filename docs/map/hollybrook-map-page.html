@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -24,7 +24,7 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; max-width: 100%; overflow-x: hidden; }
 
   body {
     font-family: 'Nunito', sans-serif;
@@ -81,6 +81,7 @@
   }
   .nav-links a:hover { color: var(--red); }
   .nav-links a.active { color: var(--green-dark); border-bottom: 2px solid var(--green-bright); padding-bottom: 2px; }
+  .nav-toggle { display: none; }
 
   /* ── RAINBOW STRIPE ── */
   .rainbow-stripe {
@@ -242,11 +243,33 @@
   .footer-copy { font-size: 0.75rem; color: rgba(255,255,255,0.35); line-height: 1.8; }
 
   @media (max-width: 768px) {
-    nav { padding: 0.85rem 1.5rem; }
-    .nav-links { gap: 1.25rem; }
+    nav { padding: 0.85rem 1rem; }
     .zoom-controls { display: none; }
+    .nav-toggle {
+      display: block;
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      color: var(--green-dark);
+      padding: 0.2rem 0.5rem;
+    }
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0; right: 0;
+      background: rgba(244,255,247,0.98);
+      flex-direction: column;
+      gap: 0;
+      padding: 0.5rem 0;
+      border-bottom: 3px solid var(--green-bright);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .nav-links.open { display: flex; }
+    .nav-links li { width: 100%; }
+    .nav-links a { display: block; padding: 0.75rem 2rem; }
   }
-  @media (max-width: 480px) { .nav-links { display: none; } }
 </style>
 </head>
 <body>
@@ -256,6 +279,7 @@
 <!-- NAV -->
 <nav>
   <a href="hollybrook-festival.html" class="nav-brand">HOLLY<span>BROOK</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
   <ul class="nav-links">
     <li><a href="../index.html#about">About</a></li>
     <li><a href="../index.html#events">Events</a></li>
@@ -308,6 +332,11 @@
 </footer>
 
 <script>
+  // ── HAMBURGER ──
+  document.getElementById('navToggle').addEventListener('click', () => {
+    document.querySelector('.nav-links').classList.toggle('open');
+  });
+
   // ── FLOATING BAUBLES ──
   const colours = ['#CC1010','#F5C800','#FF3DB4','#7B3DF5','#FF6B00','#00C8F0','#A0E020','#00A83A'];
   const pc = document.getElementById('particleContainer');
